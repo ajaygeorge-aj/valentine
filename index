@@ -5,6 +5,12 @@
 <title>Be My Valentine 💖</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<!-- WhatsApp / Social Preview -->
+<meta property="og:title" content="A question just for you 💖">
+<meta property="og:description" content="I made something special for you">
+<meta property="og:image" content="media/img1.jpg">
+<meta property="og:type" content="website">
+
 <style>
   * {
     box-sizing: border-box;
@@ -25,13 +31,12 @@
   .heart {
     position: absolute;
     color: rgba(255, 77, 109, 0.6);
-    font-size: 20px;
     animation: floatUp 6s linear infinite;
   }
 
   @keyframes floatUp {
-    0% { transform: translateY(100vh) scale(1); opacity: 1; }
-    100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
+    0% { transform: translateY(100vh); opacity: 1; }
+    100% { transform: translateY(-10vh); opacity: 0; }
   }
 
   .container {
@@ -78,7 +83,7 @@
     color: #333;
   }
 
-  .upload-section {
+  .memory-section {
     display: none;
     animation: fadeIn 1s ease forwards;
   }
@@ -88,21 +93,17 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
-  input[type="file"] {
-    margin-top: 15px;
-  }
-
-  .gallery {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-top: 15px;
-  }
-
-  .gallery img {
+  #slideshow {
     width: 100%;
-    border-radius: 12px;
-    object-fit: cover;
+    border-radius: 16px;
+    margin-top: 15px;
+  }
+
+  #memoryVideo {
+    width: 100%;
+    border-radius: 16px;
+    margin-top: 15px;
+    display: none;
   }
 </style>
 </head>
@@ -117,31 +118,30 @@
     <button id="noBtn">No 🙈</button>
   </div>
 
-<div class="upload-section" id="memorySection">
-  <h2>Some moments I love 💕</h2>
-
-  <img id="slideshow" />
-
-  <video id="memoryVideo" muted loop playsinline>
-    <source src="media/memory.mp4" type="video/mp4">
-  </video>
+  <div class="memory-section" id="memorySection">
+    <h2>Some moments I love 💕</h2>
+    <img id="slideshow" alt="Memories">
+    <video id="memoryVideo" muted loop playsinline>
+      <source src="media/memory.mp4" type="video/mp4">
+    </video>
+  </div>
 </div>
 
-<!-- Romantic Music -->
+<!-- Music -->
 <audio id="music" loop>
   <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mp3">
 </audio>
 
 <script>
-  // Personalize with URL param
+  // URL name personalization (optional)
   const params = new URLSearchParams(window.location.search);
   const name = params.get("name");
   if (name) {
     document.getElementById("question").innerText =
-      `Hey ${Nandana}, will you be my Valentine? 💘`;
+      `Hey ${name}, will you be my Valentine? 💘`;
   }
 
-  // Floating hearts generator
+  // Floating hearts
   setInterval(() => {
     const heart = document.createElement("div");
     heart.className = "heart";
@@ -155,12 +155,14 @@
   const noBtn = document.getElementById("noBtn");
   const yesBtn = document.getElementById("yesBtn");
   const buttons = document.getElementById("buttons");
-  const uploadSection = document.getElementById("uploadSection");
+  const memorySection = document.getElementById("memorySection");
+  const slideshow = document.getElementById("slideshow");
+  const video = document.getElementById("memoryVideo");
   const music = document.getElementById("music");
 
   let noScale = 1;
 
-  // Evil NO button behavior 😈
+  // NO button chaos 😈
   noBtn.addEventListener("mouseover", () => {
     const maxX = buttons.clientWidth - noBtn.clientWidth;
     const maxY = buttons.clientHeight - noBtn.clientHeight;
@@ -173,27 +175,35 @@
     noBtn.style.transform = `scale(${noScale})`;
   });
 
+  // Slideshow images (make sure these exist in /media)
+  const images = [
+    "media/img1.jpg",
+    "media/img2.jpg",
+    "media/img3.jpg"
+  ];
+
+  let currentIndex = 0;
+
+  function startSlideshow() {
+    slideshow.src = images[currentIndex];
+    setInterval(() => {
+      currentIndex = (currentIndex + 1) % images.length;
+      slideshow.src = images[currentIndex];
+    }, 2500);
+  }
+
   // YES click 💖
   yesBtn.addEventListener("click", () => {
     document.getElementById("question").innerText = "Best decision ever 💕";
     buttons.style.display = "none";
-    uploadSection.style.display = "block";
+    memorySection.style.display = "block";
     music.play();
-  });
+    startSlideshow();
 
-  // Image preview gallery
-  document.getElementById("imageUpload").addEventListener("change", (e) => {
-    const gallery = document.getElementById("gallery");
-    gallery.innerHTML = "";
-    [...e.target.files].forEach(file => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const img = document.createElement("img");
-        img.src = reader.result;
-        gallery.appendChild(img);
-      };
-      reader.readAsDataURL(file);
-    });
+    setTimeout(() => {
+      video.style.display = "block";
+      video.play();
+    }, 6000);
   });
 </script>
 
